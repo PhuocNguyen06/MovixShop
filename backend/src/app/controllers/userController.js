@@ -9,6 +9,7 @@ const crypto = require("crypto");
 const sendEmail = require("./emailController");
 
 //Register account
+
 const createUser = asyncHandler(async (req, res) => {
   try {
     const { email } = req.body;
