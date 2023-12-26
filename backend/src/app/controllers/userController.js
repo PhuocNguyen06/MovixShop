@@ -106,8 +106,11 @@ const logout = asyncHandler(async (req, res) => {
 //get all users
 
 const getallUser = asyncHandler(async (req, res) => {
+  const query = req.query.new;
   try {
-    const getUsers = await User.find();
+    const getUsers = query
+      ? await User.find().sort({ _id: -1 })
+      : await User.find();
     res.json(getUsers);
   } catch (err) {
     throw new Error(err);
@@ -121,7 +124,8 @@ const getaUser = asyncHandler(async (req, res) => {
   validateMongoDbId(id);
   try {
     const getaUser = await User.findById(id);
-    res.json(getaUser);
+    const { password, ...info } = getaUser._doc;
+    res.json(info);
   } catch (err) {
     throw new Error(err);
   }
@@ -247,23 +251,21 @@ const forgotPasswordToken = asyncHandler(async (req, res) => {
 });
 
 //reset password
-const resetPassword = asyncHandler(async(req, res)=> {
+const resetPassword = asyncHandler(async (req, res) => {
   const { password } = req.body;
   const { token } = req.params;
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetExpires: {$gt: Date.now() },
+    passwordResetExpires: { $gt: Date.now() },
   });
-  if(!user) throw new Error("Toke Expired, Please try again later");
+  if (!user) throw new Error("Toke Expired, Please try again later");
   user.password = password;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
   res.json(user);
-
-})
-
+});
 
 module.exports = {
   createUser,
@@ -278,5 +280,5 @@ module.exports = {
   logout,
   updatePassword,
   forgotPasswordToken,
-  resetPassword
+  resetPassword,
 };
