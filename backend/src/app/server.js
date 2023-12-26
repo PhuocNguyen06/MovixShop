@@ -8,6 +8,7 @@ const dbConnect = require('./config/dbConnect');
 const dotenv = require('dotenv').config();
 const authRouter = require('./routes/authRoute');
 const productRoute = require('./routes/productRoute');
+const blogRoute = require('./routes/blogRoute');
 const { notFound, errorHandler } = require("./middleware/errorHandler");
 const cookieParser = require('cookie-parser');
 
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/product", productRoute);
+app.use("/api/blog", blogRoute);
 
 app.use(notFound);
 app.use(errorHandler);
