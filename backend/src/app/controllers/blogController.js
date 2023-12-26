@@ -24,21 +24,35 @@ const getBlog = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
-//get All Blog
-const getAllBlog = asyncHandler(async (req, res)=>{
-    try {
-        const getAllBlog = await Blog.find();
-        res.json(getAllBlog);
-    } catch(error) {
-     throw new Error(error);
-    }
-});
-//update Blog
 
+//get All Blog
+const getAllBlog = asyncHandler(async (req, res) => {
+  try {
+    const getAllBlog = await Blog.find();
+    res.json(getAllBlog);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//update Blog
+const updateBlog = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+      const updateBlog = await Blog.findByIdAndUpdate(id, req.body, {
+        new: true,
+      });
+      res.json(updateBlog);
+    } catch (error) {
+      throw new Error(error);
+    }
+  });
 //delete Blog
 
-module.exports = { 
-    createBlog,
-    getBlog,
-    getAllBlog
+module.exports = {
+  createBlog,
+  getBlog,
+  getAllBlog,
+  updateBlog
 };
