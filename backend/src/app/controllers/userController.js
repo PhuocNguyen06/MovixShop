@@ -133,8 +133,8 @@ const deletedUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const getaUser = await User.findByIdAndDelete(id);
-    res.json(getaUser);
+    const deletedUser = await User.findByIdAndDelete(id);
+    res.json(deletedUser);
   } catch (err) {
     throw new Error(err);
   }
