@@ -1,17 +1,44 @@
 const Blog = require("../models/blogModel");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-const validateMongoDbId = require("../utils/validateMongoDbId")
-
+const validateMongoDbId = require("../utils/validateMongoDbId");
 
 //create a new blog
-const createBlog = asyncHandler(async(req, res)=> {
+const createBlog = asyncHandler(async (req, res) => {
+  try {
+    const newBlog = await Blog.create(req.body);
+    res.json(newBlog);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//get Blog
+const getBlog = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id);
+  try {
+    const getBlog = await Blog.findById(id);
+    res.json(getBlog);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+//get All Blog
+const getAllBlog = asyncHandler(async (req, res)=>{
     try {
-        const newBlog = await Blog.create(req.body);
-        res.json(newBlog);
+        const getAllBlog = await Blog.find();
+        res.json(getAllBlog);
     } catch (error) {
         throw new Error(error);
     }
-})
+});
+//update Blog
 
-module.exports = { createBlog }
+//delete Blog
+
+module.exports = { 
+    createBlog,
+    getBlog,
+    getAllBlog
+};
