@@ -13,4 +13,5 @@ router.post("/", authMiddleware,isAdmin, createBlog);
 router.get("/:id", getBlog);
 router.get("/", getAllBlog);
 router.put("/:id", authMiddleware, isAdmin, updateBlog);
+
 module.exports = router;
