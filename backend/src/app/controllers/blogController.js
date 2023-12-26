@@ -14,7 +14,7 @@ const createBlog = asyncHandler(async (req, res) => {
 });
 
 //get Blog
-const getBlog = asyncHandler(async (req, res) => {
+const getaBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
@@ -69,7 +69,7 @@ const deletedBlog = asyncHandler(async (req, res) => {
 
 module.exports = {
   createBlog,
-  getBlog,
+  getaBlog,
   getAllBlog,
   updateBlog,
   deletedBlog
