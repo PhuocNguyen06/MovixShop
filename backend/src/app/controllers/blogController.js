@@ -29,8 +29,8 @@ const getAllBlog = asyncHandler(async (req, res)=>{
     try {
         const getAllBlog = await Blog.find();
         res.json(getAllBlog);
-    } catch (error) {
-        throw new Error(error);
+    } catch(error) {
+     throw new Error(error);
     }
 });
 //update Blog
