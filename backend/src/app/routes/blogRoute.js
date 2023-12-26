@@ -5,7 +5,7 @@ const {
     getBlog,
     getAllBlog,
     updateBlog,
-    deleteBlog
+    deletedBlog
 } = require("../controllers/blogController")
 const router = express.Router();
 
@@ -14,6 +14,6 @@ router.post("/", authMiddleware,isAdmin, createBlog);
 router.get("/:id", getBlog);
 router.get("/", getAllBlog);
 router.put("/:id", authMiddleware, isAdmin, updateBlog);
-router.delete("/:id", authMiddleware, isAdmin, deleteBlog )
+router.delete("/:id", authMiddleware, isAdmin, deletedBlog )
 
 module.exports = router;

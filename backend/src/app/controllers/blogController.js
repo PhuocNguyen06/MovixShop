@@ -56,11 +56,11 @@ const updateBlog = asyncHandler(async (req, res) => {
   });
 //delete Blog
 
-const deleteBlog = asyncHandler(async (req, res) => {
+const deletedBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const deleteBlog = await Blog.findByIdAndDelete(id);
+    const deletedBlog = await Blog.findByIdAndDelete(id);
     res.json(deleteBlog);
   } catch (error) {
     throw new Error(error);
@@ -72,5 +72,5 @@ module.exports = {
   getBlog,
   getAllBlog,
   updateBlog,
-  deleteBlog
+  deletedBlog
 };
