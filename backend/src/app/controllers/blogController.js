@@ -54,6 +54,7 @@ const updatedBlog = asyncHandler(async (req, res) => {
       throw new Error(error);
     }
   });
+
 //delete Blog
 
 const deletedBlog = asyncHandler(async (req, res) => {
@@ -61,7 +62,7 @@ const deletedBlog = asyncHandler(async (req, res) => {
   validateMongoDbId(id);
   try {
     const deletedBlog = await Blog.findByIdAndDelete(id);
-    res.json(deleteBlog);
+    res.json(deletedBlog);
   } catch (error) {
     throw new Error(error);
   }
