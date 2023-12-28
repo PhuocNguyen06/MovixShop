@@ -18,7 +18,9 @@ const getaBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const getBlog = await Blog.findById(id);
+    const getBlog = await Blog.findById(id)
+      .populate("likes")
+      .populate("dislikes");
     const updateViews = await Blog.findByIdAndUpdate(
       id,
       {
@@ -138,7 +140,8 @@ const disliketheBlog = asyncHandler(async (req, res) => {
         isLiked: false,
       },
       { new: true }
-    );0
+    );
+    0;
     res.json(blog);
   }
   if (isDisliked) {
@@ -171,5 +174,5 @@ module.exports = {
   updatedBlog,
   deletedBlog,
   liketheBlog,
-  disliketheBlog
+  disliketheBlog,
 };
