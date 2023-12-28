@@ -155,7 +155,7 @@ const disliketheBlog = asyncHandler(async (req, res) => {
     const blog = await Blog.findByIdAndUpdate(
       blogId,
       {
-        $push: { dislikes: loginUserId },
+        $push: { likes: loginUserId },
         isDisliked: true,
       },
       { new: true }
