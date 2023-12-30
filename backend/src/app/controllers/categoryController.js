@@ -35,10 +35,22 @@ const getCategory = asyncHandler(async(req, res)=> {
     }
 });
 
+//update a category
+const updatedCategory = asyncHandler(async(req, res)=>{
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+        const updatedCategory = await Category.findByIdAndUpdate(id, req.body, { new: true });
+        res.json(updatedCategory);
+    } catch (error) {
+        throw new Error(error(error));
+    }
+})
 
 
 module.exports = {
     createCategory,
     getAllCategory,
-    getCategory
+    getCategory,
+    updatedCategory
 }
