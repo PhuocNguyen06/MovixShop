@@ -1,6 +1,6 @@
 const Category = require("../models/categoryModel")
 const asyncHandler = require("express-async-handler");
-// const validateMongoDbId = require("../utils/validateMongodbId");
+const validateMongoDbId = require("../utils/validateMongoDbId");
 
 
 //create a new category
@@ -23,7 +23,22 @@ const getAllCategory = asyncHandler(async(req, res)=> {
     }
 })
 
+//get a category
+const getCategory = asyncHandler(async(req, res)=> {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+        const getaCategory = await Category.findById(id);
+        res.json(getaCategory)
+    } catch (error) {
+        
+    }
+});
+
+
+
 module.exports = {
     createCategory,
-    getAllCategory
+    getAllCategory,
+    getCategory
 }
