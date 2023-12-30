@@ -11,7 +11,19 @@ const createCategory = asyncHandler(async (req, res) => {
     }
   });
 
+//get a category
+const getaCategory = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+      const getaCategory = await Category.findById(id);
+      res.json(getaCategory);
+    } catch (error) {
+      throw new Error(error);
+    }
+  });
 
 module.exports = {
-    createCategory
+    createCategory,
+    getaCategory
 }
