@@ -31,7 +31,7 @@ const getCategory = asyncHandler(async(req, res)=> {
         const getaCategory = await Category.findById(id);
         res.json(getaCategory)
     } catch (error) {
-        
+        throw new Error(error);
     }
 });
 
@@ -43,9 +43,11 @@ const updatedCategory = asyncHandler(async(req, res)=>{
         const updatedCategory = await Category.findByIdAndUpdate(id, req.body, { new: true });
         res.json(updatedCategory);
     } catch (error) {
-        throw new Error(error(error));
+        throw new Error(error);
     }
 })
+
+
 
 
 module.exports = {
