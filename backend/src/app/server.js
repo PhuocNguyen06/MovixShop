@@ -9,7 +9,7 @@ const dotenv = require('dotenv').config();
 const authRouter = require('./routes/authRoute');
 const productRoute = require('./routes/productRoute');
 const blogRoute = require('./routes/blogRoute');
-const categoryRoute = require('./routes/categoryRoute');
+const categoryRoute = require('./routes/prodcategoryRoute');
 const { notFound, errorHandler } = require("./middleware/errorHandler");
 const cookieParser = require('cookie-parser');
 
