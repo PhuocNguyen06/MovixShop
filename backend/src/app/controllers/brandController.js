@@ -35,10 +35,23 @@ const getAllBrand = asyncHandler(async (req, res) => {
   });
 //update the brand
 
+const updateBrand = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+      const updatedBrand = await Brand.findByIdAndUpdate(id, req.body, {
+        new: true,
+      });
+      res.json(updatedBrand);
+    } catch (error) {
+      throw new Error(error);
+    }
+});
 //delete the brand
 
 module.exports = {
     createBrand,
     getBrand,
-    getAllBrand
+    getAllBrand,
+    updateBrand
 };
