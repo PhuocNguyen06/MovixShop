@@ -4,11 +4,13 @@ const router = express.Router();
 const { 
     createCoupon,
     getCoupon,
-    getAllCoupons
+    getAllCoupons,
+    updateCoupon
 } = require("../controllers/couponController")
 
 router.post("/", authMiddleware, isAdmin, createCoupon);
 router.get("/:id", authMiddleware, isAdmin, getCoupon);
 router.get("/", authMiddleware, isAdmin, getAllCoupons);
+router.put("/:id", authMiddleware, isAdmin, updateCoupon);
 
 module.exports = router;
