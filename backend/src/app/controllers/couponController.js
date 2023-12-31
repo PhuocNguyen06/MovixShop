@@ -27,11 +27,20 @@ const getCoupon = asynHandler(async (req, res) => {
 });
 // get all coupon
 
+const getAllCoupons = asynHandler(async (req, res) => {
+    try {
+      const coupons = await Coupon.find();
+      res.json(coupons);
+    } catch (error) {
+      throw new Error(error);
+    }
+});
 //update a coupon
 
 //delete a coupon
 
 module.exports = {
     createCoupon,
-    getCoupon
+    getCoupon,
+    getAllCoupons
  }
