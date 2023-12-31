@@ -6,13 +6,15 @@ const {
     getAllProduct,
     deleteProduct,
     updateProduct,
-    addToWishlist
+    addToWishlist,
+    rating
 } =require("../controllers/productController")
 const router = express.Router();
 
 router.post('/', authMiddleware, isAdmin, createProduct);
 router.get('/:id', getaProduct);
 router.put("/wishlist", authMiddleware, addToWishlist);
+router.put("/rating", authMiddleware, rating);
 router.delete('/:id', authMiddleware, isAdmin, deleteProduct);
 router.put('/:id', authMiddleware, isAdmin, updateProduct);
 router.get('/', getAllProduct);
