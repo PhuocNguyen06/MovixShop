@@ -16,7 +16,8 @@ const {
     forgotPasswordToken,
     resetPassword,
     loginAdmin,
-    getWishlist
+    getWishlist,
+    saveAddress
 } = require("../controllers/userController");
 
 router.post("/register",createUser);
@@ -34,6 +35,8 @@ router.delete("/:id", deletedUser);
 router.put("/edit-user", authMiddleware, updatedUser);
 router.put("/block-user/:id", authMiddleware, isAdmin, blockUser);
 router.put("/unblock-user/:id", authMiddleware, isAdmin, unblockUser);
+router.put("/save-address", authMiddleware, saveAddress);
+
 
 
 module.exports = router;
