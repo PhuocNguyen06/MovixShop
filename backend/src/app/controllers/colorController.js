@@ -26,7 +26,19 @@ const getColor = asyncHandler(async (req, res) => {
     }
 });
 
+//get all colors
+
+const getAllColors = asyncHandler(async (req, res) => {
+    try {
+        const getAllColors = await Color.find();
+        res.json(getAllColors);
+    } catch ( error) {
+        throw new Error(error);
+    }
+});
+
 module.exports = {
   createColor,
-  getColor
+  getColor,
+  getAllColors
 };
