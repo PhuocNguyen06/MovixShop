@@ -15,7 +15,8 @@ const {
     updatePassword,
     forgotPasswordToken,
     resetPassword,
-    loginAdmin
+    loginAdmin,
+    getWishlist
 } = require("../controllers/userController");
 
 router.post("/register",createUser);
@@ -26,11 +27,13 @@ router.post("/login", loginUserCtrl);
 router.post("/admin-login", loginAdmin);
 router.get("/all-users", getallUser)
 router.get("/refresh",handleRefreshToken);
-router.get("/logout", logout)
+router.get("/logout", logout);
+router.get("/wishlist", authMiddleware, getWishlist);
 router.get("/:id", authMiddleware,isAdmin, getaUser);
 router.delete("/:id", deletedUser);
 router.put("/edit-user", authMiddleware, updatedUser);
 router.put("/block-user/:id", authMiddleware, isAdmin, blockUser);
 router.put("/unblock-user/:id", authMiddleware, isAdmin, unblockUser);
+
 
 module.exports = router;
