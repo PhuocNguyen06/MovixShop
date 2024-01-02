@@ -13,7 +13,20 @@ const createColor = asyncHandler(async (req, res) => {
   }
 });
 
+//get color
+
+const getColor = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+      const getaColor = await Color.findById(id);
+      res.json(getaColor);
+    } catch (error) {
+      throw new Error(error);
+    }
+});
+
 module.exports = {
   createColor,
-
+  getColor
 };
