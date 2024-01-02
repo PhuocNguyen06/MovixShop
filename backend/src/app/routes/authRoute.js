@@ -20,7 +20,8 @@ const {
     saveAddress,
     addToCart,
     getUserCart,
-    emptyCart
+    emptyCart,
+    applyCoupon
 } = require("../controllers/userController");
 
 router.post("/register",createUser);
@@ -30,6 +31,7 @@ router.put("/password", authMiddleware, updatePassword);
 router.post("/login", loginUserCtrl);
 router.post("/admin-login", loginAdmin);
 router.post("/cart", authMiddleware, addToCart);
+router.post("/cart/applycoupon", authMiddleware, applyCoupon);
 router.get("/all-users", getallUser)
 router.get("/refresh",handleRefreshToken);
 router.get("/logout", logout);
