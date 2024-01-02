@@ -25,7 +25,8 @@ const {
     createOrder,
     getOrders,
     getAllOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    getOrderByUserId
 } = require("../controllers/userController");
 
 router.post("/register",createUser);
@@ -46,6 +47,7 @@ router.put(
 router.get("/all-users", getallUser);
 router.get("/get-orders", authMiddleware, getOrders);
 router.get("/getallorders", authMiddleware, isAdmin, getAllOrders);
+router.post("/getorderbyuser/:id", authMiddleware, isAdmin, getOrderByUserId);
 router.get("/refresh",handleRefreshToken);
 router.get("/logout", logout);
 router.get("/wishlist", authMiddleware, getWishlist);
