@@ -19,6 +19,7 @@ const {
     getWishlist,
     saveAddress,
     addToCart,
+    getUserCart
 } = require("../controllers/userController");
 
 router.post("/register",createUser);
@@ -32,6 +33,7 @@ router.get("/all-users", getallUser)
 router.get("/refresh",handleRefreshToken);
 router.get("/logout", logout);
 router.get("/wishlist", authMiddleware, getWishlist);
+router.get("/cart", authMiddleware, getUserCart);
 router.get("/:id", authMiddleware,isAdmin, getaUser);
 router.delete("/:id", deletedUser);
 router.put("/edit-user", authMiddleware, updatedUser);
