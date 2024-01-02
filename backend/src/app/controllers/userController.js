@@ -10,6 +10,7 @@ const { generateRefreshToken } = require("../config/generateRefreshToken");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("./emailController");
+const uniqid = require("uniqid");
 
 //Register account
 
@@ -474,9 +475,21 @@ const createOrder = asyncHandler(async (req, res) => {
   }
 });
 
+//get order
 
-
-
+const getOrders = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  try {
+    const userorders = await Order.findOne({ orderby: _id })
+      .populate("products.product")
+      .populate("orderby")
+      .exec();
+    res.json(userorders);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
 
 module.exports = {
@@ -500,5 +513,6 @@ module.exports = {
   getUserCart,
   emptyCart,
   applyCoupon,
-  createOrder
+  createOrder,
+  getOrders
 };
