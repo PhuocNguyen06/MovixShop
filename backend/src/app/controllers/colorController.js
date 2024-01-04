@@ -56,11 +56,23 @@ const updateColor = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+
 //delete
+const deleteColor = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id);
+  try {
+    const deleteColor = await Color.findByIdAndDelete(id);
+    res.json("Deleted");
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
 module.exports = {
   createColor,
   getColor,
   getAllColors,
-  updateColor
+  updateColor,
+  deleteColor
 };
