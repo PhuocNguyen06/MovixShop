@@ -37,6 +37,10 @@ const getAllColors = asyncHandler(async (req, res) => {
     }
 });
 
+//update
+
+//delete
+
 module.exports = {
   createColor,
   getColor,
