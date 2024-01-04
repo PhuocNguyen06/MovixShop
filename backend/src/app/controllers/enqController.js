@@ -12,6 +12,21 @@ const createEnqiry = asynHandler(async (req, res) => {
   }
 });
 
+//update a Enqiry
+
+const updateEnqiry = asynHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+      const updatedEnqiry = await Coupon.findByIdAndUpdate(id, req.body, {
+        new: true,
+      });
+      res.json(updatedEnqiry);
+    } catch (error) {
+      throw new Error(error);
+    }
+});
 module.exports = {
   createEnqiry,
+  updateEnqiry
 };
