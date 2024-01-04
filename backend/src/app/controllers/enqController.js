@@ -40,8 +40,22 @@ const deleteEnquiry = asynHandler(async (req, res) => {
     }
 });
 
+//get a Enqiry
+
+const getEnqiry = asynHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+      const getAEnqiry = await Coupon.findById(id);
+      res.json(getAcoupon);
+    } catch (error) {
+      throw new Error(error);
+    }
+});
+
 module.exports = {
   createEnqiry,
   updateEnqiry,
-  deleteEnquiry
+  deleteEnquiry,
+  getEnqiry
 };
