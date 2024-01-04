@@ -53,9 +53,21 @@ const getEnqiry = asynHandler(async (req, res) => {
     }
 });
 
+//get All Enquiry
+
+const getAllEnquiry = asynHandler(async (req, res) => {
+    try {
+      const getAllEnquiry = await Coupon.find();
+      res.json(getAllEnquiry);
+    } catch (error) {
+      throw new Error(error);
+    }
+});
+
 module.exports = {
   createEnqiry,
   updateEnqiry,
   deleteEnquiry,
-  getEnqiry
+  getEnqiry,
+  getAllEnquiry
 };
