@@ -194,6 +194,7 @@ const uploadImages = asyncHandler(async (req, res) => {
         new: true,
       }
     );
+    console.log(findBlog);
     res.json(findBlog);
   } catch (error) {
     throw new Error(error);

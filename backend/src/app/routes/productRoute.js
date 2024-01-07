@@ -18,7 +18,7 @@ router.put(
   "/upload/:id",
   authMiddleware,
   isAdmin,
-  uploadPhoto.array("images", 10),
+  uploadPhoto.array("images", 2),
   productImgResize,
   uploadImages
 );

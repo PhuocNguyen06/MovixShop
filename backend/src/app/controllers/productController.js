@@ -226,7 +226,7 @@ const uploadImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const uploader = (path) => cloudinaryUploadImg(path, "images/products");
+    const uploader = (path) => cloudinaryUploadImg(path, "../public/images");
     const urls = [];
     const files = req.files;
     for (const file of files) {
@@ -234,6 +234,8 @@ const uploadImages = asyncHandler(async (req, res) => {
       const newpath = await uploader(path);
       console.log(newpath);
       urls.push(newpath);
+      console.log(file);
+      // fs.unlinkSync(path);
     }
     const findProduct = await Product.findByIdAndUpdate(
       id,
@@ -246,6 +248,7 @@ const uploadImages = asyncHandler(async (req, res) => {
         new: true,
       }
     );
+    console.log(findProduct);
     res.json(findProduct);
   } catch (error) {
     throw new Error(error);
