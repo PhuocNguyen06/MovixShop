@@ -6,6 +6,23 @@ const asynHandler = require("express-async-handler");
 
 const createCoupon = asynHandler(async (req, res) => {
   try {
+    const { discount, expiry } = req.body;
+    if (discount > 100) {
+      res.status(400).json({ error: "Discount cannot be greater than 100%" });
+    }
+    const currentDate = new Date();
+    if (new Date(expiry) < currentDate) {
+      return res
+        .status(400)
+        .json({ error: "Expiration date must be in the future" });
+    }
+    const expired = await Coupon.exists({
+      expiry: { $lt: currentDate },
+    });
+
+    if (expired) {
+      return res.status(400).json({ error: "Coupon has expired" });
+    }
     const newCoupon = await Coupon.create(req.body);
     res.json(newCoupon);
   } catch (error) {
@@ -67,7 +84,9 @@ const expiredCoupons = asynHandler(async (req, res) => {
     const currentDate = new Date();
     const couponExpired = await Coupon.find({ expiry: { $lt: currentDate } });
     if (couponExpired.length > 0) {
-      const deleteCoupon = await Coupon.deleteMany({ expiry: { $lt: currentDate } });
+      const deleteCoupon = await Coupon.deleteMany({
+        expiry: { $lt: currentDate },
+      });
       res.json(deleteCoupon);
     } else {
       res.json({ message: "No expired coupons found" });
@@ -83,5 +102,5 @@ module.exports = {
   getAllCoupons,
   updateCoupon,
   deleteCoupon,
-  expiredCoupons
+  expiredCoupons,
 };
