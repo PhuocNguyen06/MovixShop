@@ -59,7 +59,7 @@ const googleAuth = asyncHandler(async (req, res) => {
 const googleCallback = asyncHandler(async (req, res) => {
   passport.authenticate("google", {
     successRedirect: process.env.CLIENT_URL,
-    failureRedirect: "/login",
+    failureRedirect: "/login/failed",
   });
 });
 
