@@ -23,6 +23,7 @@ const {
     emptyCart,
     applyCoupon,
     createOrder,
+    deleteOrder,
     getOrders,
     getAllOrders,
     updateOrderStatus,
@@ -44,6 +45,7 @@ router.put(
     isAdmin,
     updateOrderStatus
 );
+router.put("/:id", authMiddleware, deleteOrder);
 router.get("/all-users", getallUser);
 router.get("/get-orders", authMiddleware, getOrders);
 router.get("/getallorders", authMiddleware, isAdmin, getAllOrders);
