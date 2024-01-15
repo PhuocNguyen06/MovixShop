@@ -403,7 +403,6 @@ const emptyCart = asyncHandler(async (req, res) => {
   }
 });
 
-
 //apply coupon
 
 const applyCoupon = asyncHandler(async (req, res) => {
@@ -470,6 +469,20 @@ const createOrder = asyncHandler(async (req, res) => {
     });
     const updated = await Product.bulkWrite(update, {});
     res.json({ message: "success" });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//delete orders
+
+const deleteOrder = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  try {
+    const user = await User.findOne({ _id });
+    const order = await Order.findByIdAndDelete( { orderby: user.id } );
+    res.json(order);
   } catch (error) {
     throw new Error(error);
   }
@@ -566,8 +579,9 @@ module.exports = {
   emptyCart,
   applyCoupon,
   createOrder,
+  deleteOrder,
   getOrders,
   getAllOrders,
   updateOrderStatus,
-  getOrderByUserId
+  getOrderByUserId,
 };
