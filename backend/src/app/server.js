@@ -17,14 +17,21 @@ const colorRouter = require("./routes/colorRoute");
 const enquiryRoute = require("./routes/enqRoute");
 const { notFound, errorHandler } = require("./middleware/errorHandler");
 const cookieParser = require('cookie-parser');
-
+const passportStrategy = require('./config/passport')
+const passport = require('passport');
 
 dbConnect();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors())
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+}))
 app.use(morgan('dev'))
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api/auth", authRouter);
 app.use("/api/product", productRoute);

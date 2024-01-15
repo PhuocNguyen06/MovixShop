@@ -29,6 +29,40 @@ const createUser = asyncHandler(async (req, res) => {
   }
 });
 
+//login with google account
+
+const loginSucess = asyncHandler(async (req, res) => {
+  const user = req.user;
+  if (user) {
+    res.status(200).json({
+      error: false,
+      message: "Successfully Logged In",
+      user: req.user,
+    });
+    res.json(user);
+  } else {
+    res.status(403).json({ error: true, message: "Not Authorized" });
+  }
+});
+
+const loginFailed = asyncHandler(async (req, res) => {
+  res.status(401).json({
+    error: true,
+    message: "Login Failure",
+  });
+});
+
+const googleAuth = asyncHandler(async (req, res) => {
+  passport.authenticate("google", ["profile", "email"]);
+});
+
+const googleCallback = asyncHandler(async (req, res) => {
+  passport.authenticate("google", {
+    successRedirect: process.env.CLIENT_URL,
+    failureRedirect: "/login",
+  });
+});
+
 //user login
 
 const loginUserCtrl = asyncHandler(async (req, res) => {
@@ -481,7 +515,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
   validateMongoDbId(_id);
   try {
     const user = await User.findOne({ _id });
-    const order = await Order.findByIdAndDelete( { orderby: user.id } );
+    const order = await Order.findByIdAndDelete({ orderby: user.id });
     res.json(order);
   } catch (error) {
     throw new Error(error);
@@ -559,6 +593,10 @@ const getOrderByUserId = asyncHandler(async (req, res) => {
 
 module.exports = {
   createUser,
+  loginSucess,
+  loginFailed,
+  googleAuth,
+  googleCallback,
   loginUserCtrl,
   getallUser,
   getaUser,
