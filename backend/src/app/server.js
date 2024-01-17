@@ -15,10 +15,12 @@ const brandRoute = require("./routes/brandRoute")
 const couponRoute = require("./routes/couponRoute");
 const colorRouter = require("./routes/colorRoute");
 const enquiryRoute = require("./routes/enqRoute");
+const vnpayRoute = require("./routes/vnpayRoute");
 const { notFound, errorHandler } = require("./middleware/errorHandler");
 const cookieParser = require('cookie-parser');
-const passportStrategy = require('./config/passport')
+const passportStrategy = require('./config/passport');
 const passport = require('passport');
+
 
 dbConnect();
 app.use(bodyParser.json());
@@ -42,6 +44,7 @@ app.use("/api/brand", brandRoute);
 app.use("/api/coupon", couponRoute);
 app.use("/api/color", colorRouter);
 app.use("/api/enquiry", enquiryRoute);
+app.use("/api/vnpay", vnpayRoute)
 
 app.use(notFound);
 app.use(errorHandler);
