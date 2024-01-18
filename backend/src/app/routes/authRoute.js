@@ -3,7 +3,7 @@ const router = express.Router();
 const {authMiddleware, isAdmin} = require("../middleware/authMiddleware")
 const {
     createUser,
-    loginSuccess,
+    loginSucess,
     loginFailed,
     googleAuth,
     googleCallback,
@@ -39,8 +39,8 @@ router.post("/forgot-password-token", forgotPasswordToken);
 router.put("/reset-password/:token", resetPassword);
 router.put("/password", authMiddleware, updatePassword);
 router.post("/login", loginUserCtrl);
-router.get("/login/success", loginSuccess);
-router.get("/login/failed", loginFailed);
+// router.get("/login/success", loginSucess);
+// router.get("/login/failed", loginFailed);
 router.get("/google", googleAuth);
 router.get("/google/callback", googleCallback);
 router.post("/admin-login", loginAdmin);

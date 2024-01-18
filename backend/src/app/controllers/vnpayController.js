@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const vnpay = require('vnpay');
 const config = require('config');
-const dateFormat = require('dateformat');
+// const dateFormat = require('dateformat');
 const querystring = require('qs');
 const crypto = require('crypto');
 

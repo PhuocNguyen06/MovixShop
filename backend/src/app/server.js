@@ -32,6 +32,7 @@ app.use(cors({
 }))
 app.use(morgan('dev'))
 app.use(cookieParser());
+app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -44,7 +45,7 @@ app.use("/api/brand", brandRoute);
 app.use("/api/coupon", couponRoute);
 app.use("/api/color", colorRouter);
 app.use("/api/enquiry", enquiryRoute);
-app.use("/api/vnpay", vnpayRoute)
+app.use("/api/vnpay", vnpayRoute);
 
 app.use(notFound);
 app.use(errorHandler);
