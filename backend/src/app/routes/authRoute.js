@@ -54,7 +54,7 @@ router.put(
     updateOrderStatus
 );
 router.put("/:id", authMiddleware, deleteOrder);
-router.get("/all-users", getallUser);
+router.get("/all-users", authMiddleware, isAdmin, getallUser);
 router.get("/get-orders", authMiddleware, getOrders);
 router.get("/getallorders", authMiddleware, isAdmin, getAllOrders);
 router.post("/getorderbyuser/:id", authMiddleware, isAdmin, getOrderByUserId);

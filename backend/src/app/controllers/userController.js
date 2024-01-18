@@ -64,7 +64,6 @@ const googleCallback = asyncHandler(async (req, res) => {
 });
 
 //user login
-
 const loginUserCtrl = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   // check if user exists or not
