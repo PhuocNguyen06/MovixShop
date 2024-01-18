@@ -36,16 +36,16 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveU
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/auth", authRouter);
-app.use("/api/product", productRoute);
-app.use("/api/blog", blogRoute);
-app.use("/api/category", categoryRoute);
-app.use("/api/blogcategory", blogcategoryRoute);
-app.use("/api/brand", brandRoute);
-app.use("/api/coupon", couponRoute);
-app.use("/api/color", colorRouter);
-app.use("/api/enquiry", enquiryRoute);
-app.use("/api/vnpay", vnpayRoute);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/product", productRoute);
+app.use("/api/v1/blog", blogRoute);
+app.use("/api/v1/category", categoryRoute);
+app.use("/api/v1/blogcategory", blogcategoryRoute);
+app.use("/api/v1/brand", brandRoute);
+app.use("/api/v1/coupon", couponRoute);
+app.use("/api/v1/color", colorRouter);
+app.use("/api/v1/enquiry", enquiryRoute);
+app.use("/api/v1/vnpay", vnpayRoute);
 
 app.use(notFound);
 app.use(errorHandler);
