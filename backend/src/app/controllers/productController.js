@@ -1,12 +1,12 @@
 const Product = require("../models/productModel");
 const User = require("../models/userModel");
+const ProductCategory = require("../models/prodcategoryModel");
 const asyncHandler = require("express-async-handler");
 const validateMongoDbId = require("../utils/validateMongoDbId");
 const slugify = require("slugify");
 const cloudinaryUploadImg = require("../utils/cloudinary");
 
-
-//create a New Product
+// create a New Product
 const createProduct = asyncHandler(async (req, res) => {
   try {
     if (req.body.title) {
@@ -263,5 +263,5 @@ module.exports = {
   updateProduct,
   addToWishlist,
   rating,
-  uploadImages
+  uploadImages,
 };

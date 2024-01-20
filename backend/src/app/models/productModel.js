@@ -4,7 +4,7 @@ const mongoose = require("mongoose"); // Erase if already required
 var productSchema = new mongoose.Schema(
   {
     title: {
-      type: String, 
+      type: String,
       required: true,
       trim: true,
     },
@@ -22,10 +22,7 @@ var productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    category: {
-      type: String,
-      required: true,
-    },
+    category: { type: String, required: true },
     brand: {
       type: String,
       required: true,
