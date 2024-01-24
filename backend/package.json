@@ -35,7 +35,8 @@
     "sharp": "^0.32.6",
     "slugify": "^1.6.6",
     "uniqid": "^5.4.0",
-    "vnpay": "^0.5.2",
-    "vn-payments": "^1.1.0"
+    "validator": "^13.11.0",
+    "vn-payments": "^1.1.0",
+    "vnpay": "^0.5.2"
   }
 }

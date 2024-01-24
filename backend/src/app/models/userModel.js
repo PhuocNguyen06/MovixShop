@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
+const { validateEmail } = require("../utils/validators");
+
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema(
   {
@@ -17,6 +19,10 @@ var userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      validate: {
+        validator: validateEmail,
+        message: (props) => `${props.value} is not a valid email address!`,
+      },
     },
     mobile: {
       type: String,
@@ -48,7 +54,7 @@ var userSchema = new mongoose.Schema(
     },
     passwordChangeAt: Date,
     passwordResetToken: String,
-    passwordResetExpires: Date, 
+    passwordResetExpires: Date,
   },
   {
     timestamps: true,
