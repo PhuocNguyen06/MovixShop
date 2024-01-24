@@ -1,5 +1,9 @@
 const mongoose = require("mongoose"); // Erase if already required
 
+const { 
+  isValidImageSize
+} = require("../utils/validators");
+
 // Declare the Schema of the Mongo model
 var productSchema = new mongoose.Schema(
   {
@@ -35,7 +39,14 @@ var productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    images: [],
+    images: {
+      type: Array,
+      default: [],
+      validate: {
+        validator: isValidImageSize,
+        message: "Image size must be less than 10MB.",
+      },
+    },
     color: {
       type: String,
       required: true,
