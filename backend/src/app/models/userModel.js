@@ -2,7 +2,10 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
-const { validateEmail } = require("../utils/validators");
+const { 
+  validateEmail,
+  validatePhoneNumber
+} = require("../utils/validators");
 
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema(
@@ -28,6 +31,11 @@ var userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      validate: {
+        validator: validatePhoneNumber,
+        message: (props) =>
+          `${props.value} is not a valid phone number! Must be 9-11 digits positive number.`,
+      },
     },
     password: {
       type: String,
