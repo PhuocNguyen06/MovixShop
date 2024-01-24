@@ -4,7 +4,8 @@ const crypto = require("crypto");
 
 const { 
   validateEmail,
-  validatePhoneNumber
+  validatePhoneNumber,
+  isValidDate
 } = require("../utils/validators");
 
 // Declare the Schema of the Mongo model
@@ -40,6 +41,14 @@ var userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    birthday: {
+      type: String,
+      validate: {
+        validator: isValidDate,
+        message: (props) =>
+          `${props.value} is not a valid date. Use the format YYYY-MM-DD.`,
+      },
     },
     role: {
       type: String,
