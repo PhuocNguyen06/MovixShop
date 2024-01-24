@@ -415,38 +415,32 @@ const removeFromCart = asyncHandler(async (req, res) => {
   try {
     const { productId } = req.params;
     const { _id } = req.user;
-
     validateMongoDbId(_id);
     validateMongoDbId(productId);
-
     const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     const cart = await Cart.findOne({ orderby: user._id });
-
     if (!cart) {
       return res.status(404).json({ error: "Cart not found" });
     }
-
     const productIndex = cart.products.findIndex(
       (product) => product.product.toString() === productId
     );
-
     if (productIndex === -1) {
       return res.status(404).json({ error: "Product not found in the cart" });
     }
-
     cart.products.splice(productIndex, 1);
     cart.cartTotal = cart.products.reduce(
       (total, product) => total + product.price * product.count,
       0
     );
-
-    // Save the updated cart
     await cart.save();
-
     res.json(cart);
   } catch (error) {
     console.error("Error removing product from cart:", error);
-    res.status(500).json({ error: "Internal server error" });
+    throw new Error(error);
   }
 });
 
