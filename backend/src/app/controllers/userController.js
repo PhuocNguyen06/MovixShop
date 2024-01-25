@@ -546,6 +546,7 @@ const createOrder = asyncHandler(async (req, res) => {
     const updated = await Product.bulkWrite(update, {});
     res.json({ message: "success" });
   } catch (error) {
+    console.log(error.message);
     throw new Error(error);
   }
 });
