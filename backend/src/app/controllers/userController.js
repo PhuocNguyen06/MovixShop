@@ -564,9 +564,10 @@ const deleteOrder = asyncHandler(async (req, res) => {
   validateMongoDbId(_id);
   try {
     const user = await User.findOne({ _id });
-    const order = await Order.findByIdAndDelete({ orderby: user.id });
+    const order = await Order.findByIdAndDelete({orderby: user._id });
     res.json(order);
   } catch (error) {
+    console.log(error.message);
     throw new Error(error);
   }
 });
