@@ -304,16 +304,25 @@ const unblockUser = asyncHandler(async (req, res, next) => {
 
 //update password
 const updatePassword = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  const { password } = req.body;
-  validateMongoDbId(_id);
-  const user = await User.findById(_id);
-  if (password) {
-    user.password = password;
-    const updatedPassword = await user.save();
-    res.json(updatedPassword);
-  } else {
-    res.json(user);
+  try {
+    const { _id } = req.user;
+    const { password } = req.body;
+    validateMongoDbId(_id);
+    const user = await User.findById(_id);
+    const isMatch = await user.isPasswordMatched(password);
+    if (isMatch) {
+      res
+        .status(400)
+        .json("The new password cannot be the same as the old password");
+    } else if (password) {
+      user.password = password;
+      const updatedPassword = await user.save();
+      res.json(updatedPassword);
+    } else {
+      res.json(user);
+    }
+  } catch (error) {
+    throw new Error(error);
   }
 });
 
@@ -564,7 +573,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
   validateMongoDbId(_id);
   try {
     const user = await User.findOne({ _id });
-    const order = await Order.findByIdAndDelete({orderby: user._id });
+    const order = await Order.findByIdAndDelete({ orderby: user._id });
     res.json(order);
   } catch (error) {
     console.log(error.message);
