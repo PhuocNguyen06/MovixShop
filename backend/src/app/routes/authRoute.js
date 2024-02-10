@@ -28,6 +28,10 @@ const {
   getAllOrders,
   updateOrderStatus,
   getOrderByUserId,
+  handleLoginSuccess,
+  handleLoginFailed,
+  handleGoogleAuth,
+  handleGoogleCallback
 } = require("../controllers/userController");
 
 router.post("/register", createUser);
@@ -36,6 +40,10 @@ router.put("/reset-password/:token", resetPassword);
 router.put("/password", authMiddleware, updatePassword);
 router.post("/login", loginUserCtrl);
 router.post("/admin-login", loginAdmin);
+router.get("/login/success", handleLoginSuccess);
+router.get("/login/failed", handleLoginFailed);
+router.get("/google", handleGoogleAuth);
+router.get("/google/callback", handleGoogleCallback);
 router.post("/cart", authMiddleware, addToCart);
 router.post("/cart/applycoupon", authMiddleware, applyCoupon);
 router.post("/cart/cash-order", authMiddleware, createOrder);

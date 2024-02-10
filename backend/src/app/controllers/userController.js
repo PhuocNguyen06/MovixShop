@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("./emailController");
 const uniqid = require("uniqid");
-
+const passport = require("passport");
 //Register account
 
 const createUser = asyncHandler(async (req, res) => {
@@ -115,29 +115,34 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
 // logout
 
 const logout = asyncHandler(async (req, res) => {
-  const cookie = req.cookies;
-  if (!cookie?.refreshToken) throw new Error("No RefreshToken in Cookie");
-  const refreshToken = cookie.refreshToken;
-  const user = await User.findOne({ refreshToken });
-  if (!user) {
+  try {
+    const cookie = req.cookies;
+    if (!cookie?.refreshToken) throw new Error("No RefreshToken in Cookie");
+    const refreshToken = cookie.refreshToken;
+    const user = await User.findOne({ refreshToken });
+    if (!user) {
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+      });
+      return res.sendStatus(403);
+    }
+    await User.findOneAndUpdate(
+      { refreshToken },
+      {
+        refreshToken: "",
+      }
+    );
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: true,
     });
-    return res.sendStatus(403);
+    res.status(200).json("Logout successfully");
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-  await User.findOneAndUpdate(
-    { refreshToken },
-    {
-      refreshToken: "",
-    }
-  );
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
-  });
-  res.sendStatus(200).json("Logout successfully");
 });
+
 
 //get all users
 
@@ -616,6 +621,40 @@ const getOrderByUserId = asyncHandler(async (req, res) => {
   }
 });
 
+// hanlde successful login
+const handleLoginSuccess = asyncHandler(async (req, res) => {
+  if (req.user) {
+    res.status(200).json({
+      success: true,
+      message: "successfull",
+      user: req.user,
+    });
+  }
+});
+
+//handle login failed
+const handleLoginFailed = asyncHandler(async (req, res) => {
+  res.status(401).json({
+    success: false,
+    message: "failure",
+  });
+});
+
+// handleGoogleAuth
+const handleGoogleAuth = asyncHandler(async (req, res) => {
+  passport.authenticate("google", {
+    scope: ["https://www.googleapis.com/auth/userinfo.email", "profile"],
+  })(req, res);
+});
+
+//handleGoogleCallback
+const handleGoogleCallback = asyncHandler(async (req, res) => {
+  passport.authenticate("google", {
+    successRedirect: CLIENT_URL,
+    failureRedirect: "/login/failed",
+  })(req, res);
+});
+
 module.exports = {
   createUser,
   loginUserCtrl,
@@ -643,4 +682,8 @@ module.exports = {
   getAllOrders,
   updateOrderStatus,
   getOrderByUserId,
+  handleLoginSuccess,
+  handleLoginFailed,
+  handleGoogleAuth,
+  handleGoogleCallback
 };
