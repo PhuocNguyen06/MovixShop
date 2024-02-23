@@ -20,7 +20,8 @@ const { notFound, errorHandler } = require("./middleware/errorHandler");
 const cookieParser = require('cookie-parser');
 const passportStrategy = require('./config/passport');
 const passport = require('passport');
-
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 dbConnect();
 app.use(bodyParser.json());
@@ -46,9 +47,10 @@ app.use("/api/v1/coupon", couponRoute);
 app.use("/api/v1/color", colorRouter);
 app.use("/api/v1/enquiry", enquiryRoute);
 app.use("/api/v1/vnpay", vnpayRoute);
+// app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerJsdoc));
 
 app.use(notFound);
 app.use(errorHandler);
 app.listen(port, ()=>{
     console.log(`App listening on port http://localhost:${port}`)
-})
+});

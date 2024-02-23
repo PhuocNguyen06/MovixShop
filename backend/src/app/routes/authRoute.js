@@ -3,10 +3,6 @@ const router = express.Router();
 const { authMiddleware, isAdmin } = require("../middleware/authMiddleware");
 const {
   createUser,
-  loginSucess,
-  loginFailed,
-  googleAuth,
-  googleCallback,
   loginUserCtrl,
   getallUser,
   getaUser,
@@ -32,6 +28,10 @@ const {
   getAllOrders,
   updateOrderStatus,
   getOrderByUserId,
+  handleLoginSuccess,
+  handleLoginFailed,
+  handleGoogleAuth,
+  handleGoogleCallback
 } = require("../controllers/userController");
 
 router.post("/register", createUser);
@@ -39,11 +39,11 @@ router.post("/forgot-password-token", forgotPasswordToken);
 router.put("/reset-password/:token", resetPassword);
 router.put("/password", authMiddleware, updatePassword);
 router.post("/login", loginUserCtrl);
-// router.get("/login/success", loginSucess);
-// router.get("/login/failed", loginFailed);
-router.get("/google", googleAuth);
-router.get("/google/callback", googleCallback);
 router.post("/admin-login", loginAdmin);
+router.get("/login/success", handleLoginSuccess);
+router.get("/login/failed", handleLoginFailed);
+router.get("/google", handleGoogleAuth);
+router.get("/google/callback", handleGoogleCallback);
 router.post("/cart", authMiddleware, addToCart);
 router.post("/cart/applycoupon", authMiddleware, applyCoupon);
 router.post("/cart/cash-order", authMiddleware, createOrder);

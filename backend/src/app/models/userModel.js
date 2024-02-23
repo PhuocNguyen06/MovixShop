@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const constants = require("../constants");
 
-const { 
+const {
   validateEmail,
   validatePhoneNumber,
-  isValidDate
+  isValidDate,
 } = require("../utils/validators");
 
 // Declare the Schema of the Mongo model
@@ -52,7 +53,15 @@ var userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "admin",
+      enum: Object.values(constants.USER.ROLE),
+      default: constants.USER.ROLE.CUSTOMER,
+      required: true,
+    },
+    gender: {
+      type: String,
+      trim: true,
+      enum: Object.values(constants.USER.GENDER),
+      default: constants.USER.GENDER.OTHER,
     },
     isBlocked: {
       type: Boolean,
@@ -65,6 +74,7 @@ var userSchema = new mongoose.Schema(
     address: {
       type: String,
     },
+    avatar: { type: String, trim: true, required: false },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     refreshToken: {
       type: String,
