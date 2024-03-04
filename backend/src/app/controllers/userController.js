@@ -55,6 +55,7 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
       lastname: findUser?.lastname,
       email: findUser?.email,
       mobile: findUser?.mobile,
+      role: findUser?.role,
       token: generateToken(findUser?._id),
     });
   } else {
@@ -88,6 +89,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
       lastname: findAdmin?.lastname,
       email: findAdmin?.email,
       mobile: findAdmin?.mobile,
+      role: findAdmin?.role,
       token: generateToken(findAdmin?._id),
     });
   } else {
@@ -142,7 +144,6 @@ const logout = asyncHandler(async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-
 
 //get all users
 
@@ -397,6 +398,55 @@ const addToCart = asyncHandler(async (req, res) => {
   }
 });
 
+const updateCart = asyncHandler(async (req, res) => {
+  const { cart } = req.body;
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  try {
+    const user = await User.findById(_id);
+    let existingCart = await Cart.findOne({ orderby: user._id });
+
+    if (!existingCart) {
+      // If the user doesn't have a cart, return an error or handle as per your application logic
+      return res.status(404).json({ message: 'Cart not found for the user' });
+    }
+
+    for (let i = 0; i < cart.length; i++) {
+      const existingProductIndex = existingCart.products.findIndex(
+        (p) => p.product.toString() === cart[i]._id
+      );
+
+      if (existingProductIndex >= 0) {
+        // Product already exists in the cart, update the quantity
+        existingCart.products[existingProductIndex].count = cart[i].count;
+      } else {
+        // New product, add it to the cart
+        const newProduct = {
+          product: cart[i]._id,
+          count: cart[i].count,
+          color: cart[i].color
+        };
+        let getPrice = await Product.findById(cart[i]._id)
+          .select("price")
+          .exec();
+        newProduct.price = getPrice.price;
+        existingCart.products.push(newProduct);
+      }
+    }
+
+    let cartTotal = 0;
+    for (let i = 0; i < existingCart.products.length; i++) {
+      cartTotal += existingCart.products[i].price * existingCart.products[i].count;
+    }
+    existingCart.cartTotal = cartTotal;
+
+    let updatedCart = await existingCart.save();
+    res.json(updatedCart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 // remove products from cart
 
 const removeFromCart = asyncHandler(async (req, res) => {
@@ -413,13 +463,18 @@ const removeFromCart = asyncHandler(async (req, res) => {
     if (!cart) {
       return res.status(404).json({ error: "Cart not found" });
     }
-    const productIndex = cart.products.findIndex(
-      (product) => product.product.toString() === productId
-    );
-    if (productIndex === -1) {
+    const productIndexes = cart.products.reduce((indexes, product, index) => {
+      if (product.product.toString() === productId) {
+        indexes.push(index);
+      }
+      return indexes;
+    }, []);
+    if (productIndexes.length === 0) {
       return res.status(404).json({ error: "Product not found in the cart" });
     }
-    cart.products.splice(productIndex, 1);
+    productIndexes.forEach((index) => {
+      cart.products.splice(index, 1);
+    });
     cart.cartTotal = cart.products.reduce(
       (total, product) => total + product.price * product.count,
       0
@@ -674,6 +729,7 @@ module.exports = {
   saveAddress,
   addToCart,
   getUserCart,
+  removeFromCart,
   emptyCart,
   applyCoupon,
   createOrder,
@@ -685,5 +741,6 @@ module.exports = {
   handleLoginSuccess,
   handleLoginFailed,
   handleGoogleAuth,
-  handleGoogleCallback
+  handleGoogleCallback,
+  updateCart
 };

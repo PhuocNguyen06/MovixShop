@@ -31,7 +31,9 @@ const {
   handleLoginSuccess,
   handleLoginFailed,
   handleGoogleAuth,
-  handleGoogleCallback
+  handleGoogleCallback,
+  removeFromCart,
+  updateCart
 } = require("../controllers/userController");
 
 router.post("/register", createUser);
@@ -62,7 +64,9 @@ router.get("/refresh", handleRefreshToken);
 router.get("/logout", logout);
 router.get("/wishlist", authMiddleware, getWishlist);
 router.get("/cart", authMiddleware, getUserCart);
+router.get("/cart/update", authMiddleware, updateCart);
 router.delete("/empty-cart", authMiddleware, emptyCart);
+router.delete("/cart/:productId", authMiddleware, removeFromCart);
 router.get("/:id", authMiddleware, isAdmin, getaUser);
 router.delete("/:id", deletedUser);
 
