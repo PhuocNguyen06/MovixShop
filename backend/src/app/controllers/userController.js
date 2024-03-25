@@ -374,7 +374,7 @@ const updateCart = asyncHandler(async (req, res) => {
 
     if (!existingCart) {
       // If the user doesn't have a cart, return an error or handle as per your application logic
-      return res.status(404).json({ message: 'Cart not found for the user' });
+      return res.status(404).json({ message: "Cart not found for the user" });
     }
 
     for (let i = 0; i < cart.length; i++) {
@@ -390,7 +390,7 @@ const updateCart = asyncHandler(async (req, res) => {
         const newProduct = {
           product: cart[i]._id,
           count: cart[i].count,
-          color: cart[i].color
+          color: cart[i].color,
         };
         let getPrice = await Product.findById(cart[i]._id)
           .select("price")
@@ -402,7 +402,8 @@ const updateCart = asyncHandler(async (req, res) => {
 
     let cartTotal = 0;
     for (let i = 0; i < existingCart.products.length; i++) {
-      cartTotal += existingCart.products[i].price * existingCart.products[i].count;
+      cartTotal +=
+        existingCart.products[i].price * existingCart.products[i].count;
     }
     existingCart.cartTotal = cartTotal;
 
@@ -482,27 +483,55 @@ const emptyCart = asyncHandler(async (req, res) => {
 
 //apply coupon
 
+// const applyCoupon = asyncHandler(async (req, res) => {
+//   const { coupon } = req.body;
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+//   const validCoupon = await Coupon.findOne({ name: coupon });
+//   if (!validCoupon) {
+//     throw new Error("Invalid Coupon");
+//   }
+//   const user = await User.findOne({ _id });
+//   let { cartTotal } = await Cart.findOne({
+//     orderby: user._id,
+//   }).populate("products.product");
+//   if (!cartTotal) throw new Error("Cart not found");
+//   let totalAfterDiscount = (
+//     cartTotal -
+//     (cartTotal * validCoupon.discount) / 100
+//   ).toFixed(2);
+//   await Cart.findOneAndUpdate(
+//     { orderby: user._id },
+//     { totalAfterDiscount },
+//     { new: true }
+//   );
+//   res.json(totalAfterDiscount);
+// });
 const applyCoupon = asyncHandler(async (req, res) => {
   const { coupon } = req.body;
   const { _id } = req.user;
   validateMongoDbId(_id);
+
   const validCoupon = await Coupon.findOne({ name: coupon });
-  if (validCoupon === null) {
+  if (!validCoupon) {
     throw new Error("Invalid Coupon");
   }
-  const user = await User.findOne({ _id });
-  let { cartTotal } = await Cart.findOne({
-    orderby: user._id,
-  }).populate("products.product");
-  let totalAfterDiscount = (
-    cartTotal -
-    (cartTotal * validCoupon.discount) / 100
-  ).toFixed(2);
-  await Cart.findOneAndUpdate(
-    { orderby: user._id },
-    { totalAfterDiscount },
-    { new: true }
+
+  const cart = await Cart.findOne({ orderby: _id }).populate(
+    "products.product"
   );
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
+
+  let totalAfterDiscount = (
+    cart.cartTotal -
+    (cart.cartTotal * validCoupon.discount) / 100
+  ).toFixed(2);
+
+  cart.totalAfterDiscount = totalAfterDiscount;
+  await cart.save();
+
   res.json(totalAfterDiscount);
 });
 
@@ -690,7 +719,6 @@ module.exports = {
   updatePassword,
   forgotPasswordToken,
   resetPassword,
-  loginAdmin,
   getWishlist,
   saveAddress,
   addToCart,
@@ -708,5 +736,5 @@ module.exports = {
   handleLoginFailed,
   handleGoogleAuth,
   handleGoogleCallback,
-  updateCart
+  updateCart,
 };

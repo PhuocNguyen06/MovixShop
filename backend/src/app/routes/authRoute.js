@@ -15,7 +15,6 @@ const {
   updatePassword,
   forgotPasswordToken,
   resetPassword,
-  loginAdmin,
   getWishlist,
   saveAddress,
   addToCart,
@@ -41,7 +40,6 @@ router.post("/forgot-password-token", forgotPasswordToken);
 router.put("/reset-password/:token", resetPassword);
 router.put("/password", authMiddleware, updatePassword);
 router.post("/login", loginUserCtrl);
-router.post("/admin-login", loginAdmin);
 router.get("/login/success", handleLoginSuccess);
 router.get("/login/failed", handleLoginFailed);
 router.get("/google", handleGoogleAuth);
