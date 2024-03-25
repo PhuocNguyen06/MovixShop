@@ -55,40 +55,8 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
       lastname: findUser?.lastname,
       email: findUser?.email,
       mobile: findUser?.mobile,
+      role: findUser?.role,
       token: generateToken(findUser?._id),
-    });
-  } else {
-    throw new Error("Invalid Credentials");
-  }
-});
-
-//admin login
-
-const loginAdmin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  // check if user exists or not
-  const findAdmin = await User.findOne({ email });
-  if (findAdmin.role !== "admin") throw new Error("Not Authorised");
-  if (findAdmin && (await findAdmin.isPasswordMatched(password))) {
-    const refreshToken = await generateRefreshToken(findAdmin?._id);
-    const updateuser = await User.findByIdAndUpdate(
-      findAdmin.id,
-      {
-        refreshToken: refreshToken,
-      },
-      { new: true }
-    );
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      maxAge: 72 * 60 * 60 * 1000,
-    });
-    res.json({
-      _id: findAdmin?._id,
-      firstname: findAdmin?.firstname,
-      lastname: findAdmin?.lastname,
-      email: findAdmin?.email,
-      mobile: findAdmin?.mobile,
-      token: generateToken(findAdmin?._id),
     });
   } else {
     throw new Error("Invalid Credentials");
@@ -142,7 +110,6 @@ const logout = asyncHandler(async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-
 
 //get all users
 
@@ -397,6 +364,56 @@ const addToCart = asyncHandler(async (req, res) => {
   }
 });
 
+const updateCart = asyncHandler(async (req, res) => {
+  const { cart } = req.body;
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  try {
+    const user = await User.findById(_id);
+    let existingCart = await Cart.findOne({ orderby: user._id });
+
+    if (!existingCart) {
+      // If the user doesn't have a cart, return an error or handle as per your application logic
+      return res.status(404).json({ message: "Cart not found for the user" });
+    }
+
+    for (let i = 0; i < cart.length; i++) {
+      const existingProductIndex = existingCart.products.findIndex(
+        (p) => p.product.toString() === cart[i]._id
+      );
+
+      if (existingProductIndex >= 0) {
+        // Product already exists in the cart, update the quantity
+        existingCart.products[existingProductIndex].count = cart[i].count;
+      } else {
+        // New product, add it to the cart
+        const newProduct = {
+          product: cart[i]._id,
+          count: cart[i].count,
+          color: cart[i].color,
+        };
+        let getPrice = await Product.findById(cart[i]._id)
+          .select("price")
+          .exec();
+        newProduct.price = getPrice.price;
+        existingCart.products.push(newProduct);
+      }
+    }
+
+    let cartTotal = 0;
+    for (let i = 0; i < existingCart.products.length; i++) {
+      cartTotal +=
+        existingCart.products[i].price * existingCart.products[i].count;
+    }
+    existingCart.cartTotal = cartTotal;
+
+    let updatedCart = await existingCart.save();
+    res.json(updatedCart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 // remove products from cart
 
 const removeFromCart = asyncHandler(async (req, res) => {
@@ -413,13 +430,18 @@ const removeFromCart = asyncHandler(async (req, res) => {
     if (!cart) {
       return res.status(404).json({ error: "Cart not found" });
     }
-    const productIndex = cart.products.findIndex(
-      (product) => product.product.toString() === productId
-    );
-    if (productIndex === -1) {
+    const productIndexes = cart.products.reduce((indexes, product, index) => {
+      if (product.product.toString() === productId) {
+        indexes.push(index);
+      }
+      return indexes;
+    }, []);
+    if (productIndexes.length === 0) {
       return res.status(404).json({ error: "Product not found in the cart" });
     }
-    cart.products.splice(productIndex, 1);
+    productIndexes.forEach((index) => {
+      cart.products.splice(index, 1);
+    });
     cart.cartTotal = cart.products.reduce(
       (total, product) => total + product.price * product.count,
       0
@@ -461,27 +483,55 @@ const emptyCart = asyncHandler(async (req, res) => {
 
 //apply coupon
 
+// const applyCoupon = asyncHandler(async (req, res) => {
+//   const { coupon } = req.body;
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+//   const validCoupon = await Coupon.findOne({ name: coupon });
+//   if (!validCoupon) {
+//     throw new Error("Invalid Coupon");
+//   }
+//   const user = await User.findOne({ _id });
+//   let { cartTotal } = await Cart.findOne({
+//     orderby: user._id,
+//   }).populate("products.product");
+//   if (!cartTotal) throw new Error("Cart not found");
+//   let totalAfterDiscount = (
+//     cartTotal -
+//     (cartTotal * validCoupon.discount) / 100
+//   ).toFixed(2);
+//   await Cart.findOneAndUpdate(
+//     { orderby: user._id },
+//     { totalAfterDiscount },
+//     { new: true }
+//   );
+//   res.json(totalAfterDiscount);
+// });
 const applyCoupon = asyncHandler(async (req, res) => {
   const { coupon } = req.body;
   const { _id } = req.user;
   validateMongoDbId(_id);
+
   const validCoupon = await Coupon.findOne({ name: coupon });
-  if (validCoupon === null) {
+  if (!validCoupon) {
     throw new Error("Invalid Coupon");
   }
-  const user = await User.findOne({ _id });
-  let { cartTotal } = await Cart.findOne({
-    orderby: user._id,
-  }).populate("products.product");
-  let totalAfterDiscount = (
-    cartTotal -
-    (cartTotal * validCoupon.discount) / 100
-  ).toFixed(2);
-  await Cart.findOneAndUpdate(
-    { orderby: user._id },
-    { totalAfterDiscount },
-    { new: true }
+
+  const cart = await Cart.findOne({ orderby: _id }).populate(
+    "products.product"
   );
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
+
+  let totalAfterDiscount = (
+    cart.cartTotal -
+    (cart.cartTotal * validCoupon.discount) / 100
+  ).toFixed(2);
+
+  cart.totalAfterDiscount = totalAfterDiscount;
+  await cart.save();
+
   res.json(totalAfterDiscount);
 });
 
@@ -669,11 +719,11 @@ module.exports = {
   updatePassword,
   forgotPasswordToken,
   resetPassword,
-  loginAdmin,
   getWishlist,
   saveAddress,
   addToCart,
   getUserCart,
+  removeFromCart,
   emptyCart,
   applyCoupon,
   createOrder,
@@ -685,5 +735,6 @@ module.exports = {
   handleLoginSuccess,
   handleLoginFailed,
   handleGoogleAuth,
-  handleGoogleCallback
+  handleGoogleCallback,
+  updateCart,
 };

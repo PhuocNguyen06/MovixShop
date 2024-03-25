@@ -7,7 +7,7 @@ const USER = {
   ROLE: {
     ADMIN: "admin",
     STAFF: "staff",
-    CUSTOMER: "customer",
+    CUSTOMER: "user",
   },
 };
 

@@ -30,22 +30,17 @@ var productSchema = new mongoose.Schema(
     brand: {
       type: String,
       required: true,
+    },    images:{
+      type : String,
+      required: true
     },
-    quantity: {
-      type: Number,
+    images: {
+      type: String,
       required: true,
     },
     sold: {
       type: Number,
       default: 0,
-    },
-    images: {
-      type: Array,
-      default: [],
-      validate: {
-        validator: isValidImageSize,
-        message: "Image size must be less than 10MB.",
-      },
     },
     color: {
       type: String,

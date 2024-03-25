@@ -11,8 +11,8 @@ const {
 } = require("../controllers/couponController")
 
 router.post("/", authMiddleware, isAdmin, createCoupon);
-router.get("/:id", authMiddleware, isAdmin, getCoupon);
-router.get("/", authMiddleware, isAdmin, getAllCoupons);
+router.get("/:id", getCoupon);
+router.get("/", getAllCoupons);
 router.put("/:id", authMiddleware, isAdmin, updateCoupon);
 router.delete("/:id", authMiddleware, isAdmin, deleteCoupon);
 router.delete("/", authMiddleware, isAdmin, expiredCoupons)
